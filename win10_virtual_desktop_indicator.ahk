@@ -2,6 +2,13 @@
 SendMode Input
 SetWorkingDir, %A_ScriptDir%
 
+Menu, Tray, NoStandard 
+Menu, Tray, Add, Exit, ByeScript 
+Menu, Tray, Default, Exit 
+ByeScript(){
+    ExitApp
+}
+
 FileInstall, indicator01.ico, %A_ScriptDir%\indicator01.ico
 FileInstall, indicator02.ico, %A_ScriptDir%\indicator02.ico
 FileInstall, indicator03.ico, %A_ScriptDir%\indicator03.ico
