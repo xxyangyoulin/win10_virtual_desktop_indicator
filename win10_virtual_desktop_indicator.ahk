@@ -24,7 +24,7 @@ DesktopCount = 2 ; Windows starts with 2 desktops at boot
 CurrentDesktop = 1 ; Desktop count is 1-indexed (Microsoft numbers them this way)
 
 updateVirtualDesktopIndicator()
-SetTimer, updateVirtualDesktopIndicator, 300
+SetTimer, updateVirtualDesktopIndicator, 500
 
 Loop, {
     Input, Key, L1 V , {Left}{Right}
@@ -33,10 +33,14 @@ Loop, {
         updateVirtualDesktopIndicator()
     }
 }
-
+    
 updateVirtualDesktopIndicator(){ ; update taskbar tray icons
     global CurrentDesktop, DesktopCount
+    ; old := CurrentDesktop
     mapDesktopsFromRegistry()
+    ; If ( old != CurrentDesktop){
+    ;     warningTooltip(CurrentDesktop)
+    ; }
     if (CurrentDesktop < 10){
         Menu, Tray, Icon,indicator0%CurrentDesktop%.ico,1
     }else{
@@ -101,4 +105,35 @@ getSessionId()
     }
     OutputDebug, Current Session Id: %SessionId%
 return SessionId
+}
+
+
+; 中间弹出tooltip
+warningTooltip(t,time:=-1500,center:=0){
+    Gui, Destroy
+    Gui, 1:Color, 212121,212121
+    Gui, 1:font, s26 w0 cffffff, Microsoft YaHei UI
+    Gui, 1:Margin,32,12
+    Gui, Add, Text,, %t%
+
+    Gui, 1: +ToolWindow +Lastfound -Caption +AlwaysOnTop  +Hwndahk_my_toast
+    WinSet, Transparent,230
+    Winset, disable
+
+    trayw := "ahk_id" . WinExist("ahk_class Shell_TrayWnd")
+    WinGetPos, tx, ty, tw, th, % trayw
+
+    yy :=A_ScreenHeight - th-160
+    Gui, Show, xCenter y%yy% AutoSize NoActivate
+
+    
+    SetTimer, SplashTextOff, %time% ; Countdown to eliminate
+    Return
+}
+
+; 消除ToolTip
+SplashTextOff(){
+    Gui, Destroy
+    ; winclose, ahk_my_toast
+    return
 }
